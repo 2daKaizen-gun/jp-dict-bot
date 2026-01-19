@@ -15,5 +15,10 @@
 - **Libraries**: `notion-client`, `python-dotenv`
 
 ## ✅ Milestone
-- **Phase 1**: 기반 설계 및 환경 구축 (Setup)
-  - [x] Phase 1-1: GitHub 저장소 및 프로젝트 보드 생성: README 초기화, Kanban 보드 세팅
+- **Phase 1**: Foundation & Environment Setup
+  - [x] Phase 1-1: Initialize GitHub Repository & Project Board
+  - [ ] Phase 1-2: Design Notion Database Schema
+  - [ ] Phase 1-3: API Authorization & Security Setup(Notion, Gemini API & .env)
+  - [ ] Phase 1-4: Setup Python Development Environment(requirements.txt)
+
+- **Phase 2**: Core Business Logic Development
