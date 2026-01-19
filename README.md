@@ -16,4 +16,4 @@
 
 ## ✅ Milestone
 - **Phase 1**: 기반 설계 및 환경 구축 (Setup)
-  - [x] Phase 1-1: GitHub 저장소 및 프로젝트 보드 생성: README 초기화 및 Kanban 보드 세팅
+  - [x] Phase 1-1: GitHub 저장소 및 프로젝트 보드 생성: README 초기화, Kanban 보드 세팅
