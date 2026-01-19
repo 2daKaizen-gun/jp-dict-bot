@@ -21,3 +21,8 @@
   - 1-4. Python 개발 환경 구축: 가상환경(venv) 설정 및 requirements.txt 작성
 - **Phase 2**: 핵심 비즈니스 로직 개발 (Core Logic)
 ...
+
+✅ Milestone
+Phase 1: Planning and building a Google cloud environment
+
+ [x]Phase 1-1: Determining Project Scope
