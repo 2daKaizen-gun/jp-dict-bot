@@ -17,7 +17,7 @@
 ## ✅ Milestone
 - **Phase 1**: Foundation & Environment Setup
   - [x] Phase 1-1: Initialize GitHub Repository & Project Board
-  - [ ] Phase 1-2: Design Notion Database Schema
+  - [x] Phase 1-2: Design Notion Database Schema
   - [ ] Phase 1-3: API Authorization & Security Setup(Notion, Gemini API & .env)
   - [ ] Phase 1-4: Setup Python Development Environment(requirements.txt)
 
