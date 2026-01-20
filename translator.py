@@ -14,32 +14,36 @@ def fetch_vocabulary_data(word):
     """
     model = genai.GenerativeModel('gemini-flash-latest')
     
-    # 2. 구조적 추출을 위한 프롬프트 구성
+  # 더 구체적이고 전문적인 지시사항 (System Instruction)
     prompt = f"""
-    Please translate the Korean word '{word}' into Japanese and provide learning data.
-    You MUST respond ONLY in JSON format with the following keys:
-    - word: Japanese Kanji or Hiragana
-    - furigana: Reading in Hiragana
-    - meaning: Korean meaning
-    - level: Estimated JLPT level (N1~N5)
-    - example: A natural Japanese sentence using the word
-    - interpretation: Korean translation of the example
+    Act as a professional Japanese language instructor and IT career consultant for Korean students.
+    Your task is to provide learning data for the Korean word '{word}'.
     
-    Respond in raw JSON format without any markdown tags or code blocks.
+    Return the result ONLY in JSON format with these exact keys:
+    - word: Japanese Kanji (or Hiragana if no Kanji is commonly used).
+    - furigana: Hiragana reading.
+    - meaning: Korean translation.
+    - level: JLPT level (N1~N5).
+    - example_ja: A natural Japanese sentence. Prioritize business or IT-related contexts if possible.
+    - example_ko: Korean translation of the example.
+    - nuance: A short tip (in Korean) about the word's nuance or usage in Japan (e.g., 'Used in formal situations').
+
+    CRITICAL: Output MUST be a valid JSON object. No markdown, no backticks, no extra text.
     """
 
     try:
         response = model.generate_content(prompt)
-        
-        # 3. 결과 파싱 (JSON 변환)
-        # AI 결과물에 혹시라도 섞여 있을 코드 블록 기호(```json)를 제거합니다.
-        raw_json = response.text.strip().replace('```json', '').replace('```', '')
-        data = json.loads(raw_json)
-        
+        # JSON 문자열만 추출하기 위한 정규화
+        content = response.text.strip()
+        if content.startswith("```json"):
+            content = content.split("```json")[1].split("```")[0].strip()
+        elif content.startswith("```"):
+            content = content.split("```")[1].split("```")[0].strip()
+            
+        data = json.loads(content)
         return data
-
     except Exception as e:
-        print(f"데이터 추출 중 오류 발생: {e}")
+        print(f"Error: {e}")
         return None
 
 # 테스트 실행
