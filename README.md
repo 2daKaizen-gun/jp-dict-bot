@@ -32,3 +32,14 @@
   - [x] Phase 3-2: Data Mapping Logic
   - [ ] Phase 3-3: Duplicate Prevention Logic
   - [ ] Phase 3-4: Exception Handling
+
+- **Phase 4**: UX & Feature Optimization
+  - [ ] Phase 4-1: Enhance Command Line Interface
+  - [ ] Phase 4-2: Batch Import Feature
+  - [ ] Phase 4-3: Automatic Furigana Generation
+  - [ ] Phase 4-4: Visual Logging System
+
+- **Phase 5**: Finalization & Documentation
+  - [ ] Phase 5-1: Code Refactoring
+  - [ ] Phase 5-2: Finalize README.md
+  - [ ] Phase 5-3: Final Project Retrospective
