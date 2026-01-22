@@ -26,3 +26,9 @@
   - [x] Phase 2-2: Gemini Prompt Engineering
   - [x] Phase 2-3: Data Parsing Module
   - [x] Phase 2-4: Local Integration Testing
+
+  - **Phase 3**: Notion Integration & Data Storage
+  - [x] Phase 3-1: Develop Notion API Wrapper
+  - [ ] Phase 3-2: Data Mapping Logic
+  - [ ] Phase 3-3: Duplicate Prevention Logic
+  - [ ] Phase 3-4: Exception Handling
