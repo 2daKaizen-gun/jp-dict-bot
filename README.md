@@ -29,6 +29,6 @@
 
 - **Phase 3**: Notion Integration & Data Storage
   - [x] Phase 3-1: Develop Notion API Wrapper
-  - [ ] Phase 3-2: Data Mapping Logic
+  - [x] Phase 3-2: Data Mapping Logic
   - [ ] Phase 3-3: Duplicate Prevention Logic
   - [ ] Phase 3-4: Exception Handling
