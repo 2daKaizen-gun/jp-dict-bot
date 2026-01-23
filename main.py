@@ -15,13 +15,9 @@ def run_auto():
         return
     
     try:
-        print(f"\n '{search_word}'에 대한 데이터 생성 중..")
-        # Gemini API로 data 가져오기 (phase 2-1, 2-2)
-        raw_response = get_raw_response_from_gemini(search_word)
-
-        print("데이터를 정제하고 있습니다...")
-        # 데이터 파싱, 정제 (phase 2-3)
-        final_data = parse_to_dict(raw_response)
+        print(f"\n '{search_word}' 데이터 생성 중..")
+        # Gemini API로 data 가져오기 (phase 2-1, 2-2), 데이터 파싱, 정제 (phase 2-3)
+        final_data = parse_to_dict(get_raw_response_from_gemini(search_word))
 
         if not final_data:
             print("오류 발생")
