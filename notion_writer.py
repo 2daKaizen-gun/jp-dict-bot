@@ -79,11 +79,11 @@ def word_duplicate(word):
             }
         )
         
-        # 결과 리스트가 비어있지 않으면 중복임
+        # 결과 리스트 비어있지 않으면 중복
         return len(response.get("results")) > 0
         
     except Exception as e:
-        print(f"⚠️ 중복 확인 중 오류 발생: {e}")
+        print(f"중복 확인 중 오류: {e}")
         return False # 오류 시 안전을 위해 중복이 아닌 것으로 간주
 
 # test code
