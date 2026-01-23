@@ -67,35 +67,30 @@ def add_word(data):
 def word_duplicate(word):
     """
     라이브러리를 거치지 않고 직접 HTTP 통신으로 중복 확인
+    중복 확인 후, 이미 존재하면 해당 페이지의 URL을 반환하고 아니면 None을 반환합니다.
     """
     url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
-    
     headers = {
         "Authorization": f"Bearer {NOTION_TOKEN}",
-        "Notion-Version": "2022-06-28", # 노션 API 버전
+        "Notion-Version": "2022-06-28", # 노션 API
         "Content-Type": "application/json"
     }
-    
     payload = {
         "filter": {
             "property": "단어",
-            "title": {
-                "equals": word
-            }
+            "title": {"equals": word}
         }
     }
 
     try:
-        # 직접 POST 요청을 보냄
         response = requests.post(url, json=payload, headers=headers)
-        
         if response.status_code == 200:
             results = response.json().get("results", [])
-            return len(results) > 0
-        else:
-            print(f"노션 API 오류: {response.status_code} - {response.text}")
-            return False
-            
+            if results:
+                # 중복된 첫 번째 페이지의 URL을 가져옴
+                return results[0].get("url") 
+            return None
+        return None
     except Exception as e:
-        print(f"requests 중 오류 발생: {e}")
-        return False
+        print(f"중복 확인 중 오류: {e}")
+        return None

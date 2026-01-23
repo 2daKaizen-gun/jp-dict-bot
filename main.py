@@ -18,12 +18,15 @@ def run_auto():
         print(f"\n '{search_word}' 데이터 생성 중..")
         # 1. Gemini API로 data 가져오기, 데이터 파싱, 정제 (phase 2)
         final_data = parse_to_dict(get_raw_response_from_gemini(search_word))
-
-        # 2. 일본어 단어 기준 중복 확인
         target_word = final_data['word']
-        if word_duplicate(target_word):
+
+        # 2. 중복 확인
+        existing_url = word_duplicate(target_word)
+
+        if existing_url:
             print(f"\n알림: '{target_word}'은(는) 이미 등록된 단어")
-            print("중복 방지 위해 작업 중단..")
+            print(f"기존 링크 확인: {existing_url}") # 링크
+            print("새로운 입력을 위해 작업을 중단..")
             return
         
         # 3. 중복 아닐 때 최종 저장
@@ -40,6 +43,6 @@ def run_auto():
             print("오류가 발생했습니다")
     except Exception as e:
         print(f"오류 발생: {e}")
-        
+
 if __name__ == "__main__":
     run_auto()

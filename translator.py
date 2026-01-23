@@ -18,9 +18,9 @@ def get_raw_response_from_gemini(word):
     - furigana: Hiragana reading.
     - meaning: Korean translation.
     - level: JLPT level (N1~N5).
-    - example_ja: A natural Japanese sentence. Prioritize business or IT-related contexts if possible.
+    - example_ja: A natural Japanese short sentence. Prioritize business or IT-related contexts if possible. 
     - example_ko: Korean translation of the example.
-    - nuance: A short tip (in Korean) about the word's nuance or usage in Japan (e.g., 'Used in formal situations').
+    - nuance: A short tip (in Korean, using 1 or 2 sentences) about the word's nuance or usage in Japan (e.g., 'Used in formal situations').
 
     CRITICAL: Output MUST be a valid JSON object. No markdown, no backticks, no extra text.
     """
