@@ -62,6 +62,30 @@ def add_word(data):
     except Exception as e:
         print(f"노션 저장 중 오류 발생: {e}")
         return None
+
+def word_duplicate(word):
+    """
+    노션 데이터베이스에서 동일한 단어가 이미 존재하는지 확인
+    """
+    try:
+        # 데이터베이스 쿼리 (필터 사용)
+        response = notion.databases.query(
+            database_id=DATABASE_ID,
+            filter={
+                "property": "단어",  # 노션의 '단어' 컬럼에서 검색
+                "title": {
+                    "equals": word   # 입력받은 단어와 일치 확인
+                }
+            }
+        )
+        
+        # 결과 리스트가 비어있지 않으면 중복임
+        return len(response.get("results")) > 0
+        
+    except Exception as e:
+        print(f"⚠️ 중복 확인 중 오류 발생: {e}")
+        return False # 오류 시 안전을 위해 중복이 아닌 것으로 간주
+
 # test code
 if __name__ == "__main__":
     # serve data
