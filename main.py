@@ -1,6 +1,6 @@
 from translator import get_raw_response_from_gemini
 from parser import parse_to_dict
-from notion_writer import add_word
+from notion_writer import add_word, word_duplicate
 import time
 
 def run_auto():
@@ -16,15 +16,18 @@ def run_auto():
     
     try:
         print(f"\n '{search_word}' 데이터 생성 중..")
-        # Gemini API로 data 가져오기 (phase 2-1, 2-2), 데이터 파싱, 정제 (phase 2-3)
+        # 1. Gemini API로 data 가져오기, 데이터 파싱, 정제 (phase 2)
         final_data = parse_to_dict(get_raw_response_from_gemini(search_word))
 
-        if not final_data:
-            print("오류 발생")
+        # 2. 일본어 단어 기준 중복 확인
+        target_word = final_data['word']
+        if word_duplicate(target_word):
+            print(f"\n알림: '{target_word}'은(는) 이미 등록된 단어")
+            print("중복 방지 위해 작업 중단..")
             return
         
-        # 4. 노션에 최종 저장 (Phase 3-1, 3-2)
-        print("노션 데이터베이스에 등록 시도...")
+        # 3. 중복 아닐 때 최종 저장
+        print(f"{target_word} 등록 시작...")
         notion_result = add_word(final_data)
 
         # Result
@@ -37,5 +40,6 @@ def run_auto():
             print("오류가 발생했습니다")
     except Exception as e:
         print(f"오류 발생: {e}")
+        
 if __name__ == "__main__":
     run_auto()
