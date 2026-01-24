@@ -33,13 +33,14 @@
   - [x] Phase 3-3: Duplicate Prevention & Tracking Logic
   - [x] Phase 3-4: Exception Handling
 
-- **Phase 4**: UX & Feature Optimization
-  - [ ] Phase 4-1: Enhance Command Line Interface
-  - [ ] Phase 4-2: Batch Import Feature
-  - [ ] Phase 4-3: Automatic Furigana Generation
-  - [ ] Phase 4-4: Visual Logging System
+- **Phase 4**: Productization & Web Interface Development
+  - [x] Phase 4-1: Web UI Conversion (Streamlit/Web Framework)
+  - [ ] Phase 4-2: Dynamic Authentication & Session Management
+  - [ ] Phase 4-3: Batch Processing & Progress Visualization
+  - [ ] Phase 4-4: User Preference Persistence (Optional)
 
-- **Phase 5**: Finalization & Documentation
-  - [ ] Phase 5-1: Code Refactoring
-  - [ ] Phase 5-2: Finalize README.md
-  - [ ] Phase 5-3: Final Project Retrospective
+- **Phase 5**: Deployment, Documentation & Portfolio Finalization
+  - [ ] Phase 5-1: Cloud Deployment
+  - [ ] Phase 5-2: Comprehensive User Documentation (The "How-To")
+  - [ ] Phase 5-3: Code Refactoring & Security Audit
+  - [ ] Phase 5-4: Final Project Retrospective (The "Story")
