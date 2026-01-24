@@ -2,7 +2,7 @@ import streamlit as st
 from translator import get_raw_response_from_gemini
 from parser import parse_to_dict
 import notion_writer as nw
-import requests
+# import requests
 
 if 'connected' not in st.session_state:
     st.session_state.connected = False
