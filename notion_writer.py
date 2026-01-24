@@ -17,16 +17,17 @@ def word_duplicate(word, token, database_id):
 
     try:
         response = requests.post(url, json=payload, headers=headers)
+        print(f"[Debug] Status Code: {response.status_code}")
+        if response.status_code != 200:
+            print(f"[Debug] Error Detail: {response.json()}")
         if response.status_code == 200:
             results = response.json().get("results", [])
-            if results:
-                # 중복된 첫 번째 페이지의 URL을 가져옴
-                return results[0].get("url") 
-            return None
+            return results[0].get("url") if results else False # 중복 없으면 False
         return None
     except Exception as e:
         print(f"중복 확인 중 오류: {e}")
         return None
+    
 
 def add_word(data, token, database_id):
     """사용자 지정 노션 데이터베이스에 단어 등록"""
