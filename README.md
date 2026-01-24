@@ -10,9 +10,12 @@
 
 ## 🛠 Tech Stack
 - **Language**: Python 3.14.0
-- **Database**: Notion
+- **Database**: Notion API
 - **AI/LLM**: Google Gemini API
-- **Libraries**: `notion-client`, `python-dotenv`
+- **UI Framework**: Streamlit
+- **Communication**: Requests
+- **Deployment** : Streamlit Cloud
+- **Security**: Streamlit Secrets
 
 ## ✅ Milestone
 - **Phase 1**: Foundation & Environment Setup
