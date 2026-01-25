@@ -41,42 +41,56 @@ if st.session_state.connected:
     st.title("🇯🇵 일본어 단어 자동 등록 시스템")
     st.info(f"현재 연결된 Database ID: `{st.session_state.db_id[:8]}...`")
     st.write("모르는 단어 하나로 예문, 뉘앙스, JLPT 레벨까지 한번에 완벽 정리!")
-    word_input = st.text_input("공부할 단어 입력: ", placeholder = "예: 기회")
+    word_input = st.text_input("공부할 단어들 입력(','로 구분): ", placeholder = "예: 기회, 도전, 성공")
 
     if st.button("AI 분석 및 노션 등록하기"):
         if not word_input:
             st.warning("단어를 입력해 주세요")
-        else:    
-            with st.spinner("AI 분석 중..."):
-                # 1. Create AI Data
-                st.write("Genimi AI가 단어 분석 중입니다...")
-                raw_ai = get_raw_response_from_gemini(word_input)
-                final_data = parse_to_dict(raw_ai)
+        else:
+            # 단어 리스트 화
+            word_list = [w.strip() for w in word_input.split(",") if w.strip()]
+            total = len(word_list)
+            st.info(f"총 {total}개의 단어 처리 시작...")
+            
+            # progress bar
+            progress_bar = st.progress(0)
 
-                # 2. Check Duplicate
-                st.write("노션 데이터베이스 중복 확인 중...")
-                duplicate_url = nw.word_duplicate(final_data['word'], st.session_state.token, st.session_state.db_id)
+            for i, word in enumerate(word_list):
+                # 개별 단어 처리 상태를 보여주는 status 창
+                with st.status(f"'{word}' 처리 중... ({i+1}/{total})") as status:
+                    # 1. Create AI Data
+                    st.write("Genimi AI가 단어 분석 중입니다...")
+                    raw_ai = get_raw_response_from_gemini(word)
+                    final_data = parse_to_dict(raw_ai)
 
-                if duplicate_url:
-                    st.warning(f"'{final_data['word']}'는 이미 등록된 단어")
-                    st.link_button("기존 단어 보기", duplicate_url)
-                else:
-                    # Notion 등록
-                    st.write("노션에 저장 중입니다...")
-                    if nw.add_word(final_data, st.session_state.token, st.session_state.db_id):
-                        st.success(f"'{final_data['word']}' 등록 성공!")
-                        st.balloons() # Balloon effects
+                    if not final_data:
+                        st.error(f"'{word}' 분석 실패.. AI 응답 형식이 올바르지 않습니다.")
+                        continue # 이 단어는 건너뛰고 다음 단어로 진행
+                    
+                    # 2. Check Duplicate
+                    for data in final_data:
+                        st.write("노션 데이터베이스 중복 확인 중...")
+                        duplicate_url = nw.word_duplicate(data['word'], st.session_state.token, st.session_state.db_id)
 
-                        # 결과 요약
-                        st.divider()
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.metric("단어", final_data['word'], final_data['furigana'])
-                        with col2:
-                            st.metric("레벨", final_data['level'])
-                        st.info(f"**뜻:**{final_data['meaning']}")
-                    else:
-                        st.error("노션 등록 실패.. 설정을 확인해 주세요")
+                        if duplicate_url:
+                            st.warning(f"'{data['word']}'는 이미 등록된 단어")
+                            st.link_button("기존 단어 보기", duplicate_url)
+                        else:
+                            # Notion 등록
+                            st.write("노션에 저장 중입니다...")
+                            if nw.add_word(data, st.session_state.token, st.session_state.db_id):
+                                st.success(f"'{data['word']}' 등록 성공!")
+                                # 결과 요약 표시
+                                st.write(f"뜻: {data['meaning']} | 레벨: {data['level']}")
+                            else:
+                                st.error(f"등록 실패: {data['word']}")
+                    status.update(label=f"'{word}' 완료!", state="complete")
+                
+                # 3. Progress bar update
+                progress_bar.progress((i + 1) / total)
+            
+            st.balloons() # balloon effect
+            st.success("모든 작업 완료되었습니다!")
 else:
     st.title("시작하기")
     st.info("왼쪽 사이드바에서 노션 연결을 먼저 완료하세요!")
