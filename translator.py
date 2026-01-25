@@ -10,9 +10,9 @@ def get_raw_response_from_gemini(word):
     model = genai.GenerativeModel('gemini-flash-latest')
   # 전문적인 지시사항 (System Instruction)
     prompt = f"'{word}'에 대한 학습 데이터를 JSON 형식으로 알려줘.."""""
-    Act as a professional Japanese language instructor and IT career consultant for Korean students.
-    Your task is to provide learning data for the Korean word '{word}'.
-    
+    You are a professional Japanese linguist and IT career consultant for students.
+    Analyze the '{word}' (regardless of its source language: Korean, English, etc.) 
+    and provide the most accurate Japanese translation and context.
     Return the result ONLY in JSON format with these exact keys:
     - word: Japanese Kanji (or Hiragana if no Kanji is commonly used).
     - furigana: Hiragana reading.

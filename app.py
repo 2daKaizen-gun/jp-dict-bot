@@ -71,7 +71,7 @@ if st.session_state.connected:
     st.title("🇯🇵 일본어 단어 자동 등록 시스템")
     st.info(f"현재 연결된 Database ID: `{st.session_state.db_id[:8]}...`")
     st.write("모르는 단어 하나로 예문, 뉘앙스, JLPT 레벨까지 한번에 완벽 정리!")
-    word_input = st.text_input("공부할 단어들 입력(','로 구분): ", placeholder = "예: 기회, 도전, 성공")
+    word_input = st.text_input("공부할 단어(한글, english, etc.) 입력(','로 구분): ", placeholder = "예: 기회, Opportunity")
 
     if st.button("AI 분석 및 노션 등록하기"):
         if not word_input:
