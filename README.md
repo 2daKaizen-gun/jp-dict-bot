@@ -1,4 +1,4 @@
-# jp-dict-bot(KR->JP Dictionary Automation)
+# jp-dict-bot(Multi-language->JP Dictionary Automation)
 > 일본어 학습 효율을 극대화하기 위한 개인 사전 자동화 프로젝트
 
 ## 📌 Project Overview
