@@ -2,12 +2,32 @@ import streamlit as st
 from translator import get_raw_response_from_gemini
 from parser import parse_to_dict
 import notion_writer as nw
-# import requests
+import json
+import os
+
+CONFIG_FILE = "user_config.json"
+
+def save_config(token, db_id):
+    """사용자 설정을 JSON 파일로 저장"""
+    with open(CONFIG_FILE, "w") as f:
+        json.dump({"token": token, "db_id": db_id}, f)
+
+def load_config():
+    """저장된 설정 불러오기"""
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, "r") as f:
+            return json.load(f)
+    return None
+
+# 초기화 전 저장된 설정 불러오기
+saved_data = load_config()
 
 if 'connected' not in st.session_state:
     st.session_state.connected = False
-    st.session_state.token = ""
-    st.session_state.db_id = ""
+    # 저장된 데이터 있으면 세션에 미리 넣기
+    st.session_state.token = saved_data['token'] if saved_data else ""
+    st.session_state.db_id = saved_data['db_id'] if saved_data else ""
+
 # page setting
 st.set_page_config(page_title="일본어 단어 자동 등록기", page_icon="🇯🇵")
 
@@ -18,6 +38,9 @@ with st.sidebar:
     # 세션 상태에 저장된 값이 있으면 기본값으로 불러옴
     input_token = st.text_input("Notion Token", type="password", value=st.session_state.get('token', ""))
     input_db_id = st.text_input("Database ID", value=st.session_state.get('db_id', ""))
+    
+    # 정보 기억 checkbox
+    remember = st.checkbox("이 브라우저에서 정보 기억하기", value=bool(saved_data))
     
     # 연결 test Button
     if st.button("Connect to Notion"):
@@ -30,6 +53,13 @@ with st.sidebar:
                     st.session_state.token = input_token
                     st.session_state.db_id = input_db_id
                     st.session_state.connected = True
+                    
+                    # checkbox 선택 시 파일로 save
+                    if remember:
+                        save_config(input_token, input_db_id)
+                    elif os.path.exists(CONFIG_FILE):
+                        os.remove(CONFIG_FILE) # 체크 해제 시 파일 삭제
+                    
                     st.success("연결 성공!")
                 else:
                     st.error("연결 실패! 토큰이나 ID를 확인하세요!")
