@@ -31,6 +31,29 @@ if 'connected' not in st.session_state:
 # page setting
 st.set_page_config(page_title="일본어 단어 자동 등록기", page_icon="🇯🇵")
 
+def show_guide():
+    with st.expander("시작 전: 노션 연동 가이드", expanded=False):
+        st.markdown("""
+        이 시스템을 이용하려면 Notion과의 연동이 필요합니다.
+        아래 순서대로 설정을 완료해 주세요.
+
+        ### 1. Notion integration 생성
+        - [노션 내 integration](https://www.notion.so/my-integrations) 페이지에 접속
+        - **'+ New integration'** 버튼 클릭해 이름 입력, 생성
+        - 생성된 **'프라이빗 API 통합 토큰'**을 복사
+        
+        ### 2. 데이터베이스 연결 추가
+        - 사용할 노션 데이터베이스 페이지로 이동
+        - 우측 상단 점 세 개(**`...`**)를 클릭 -> 맨 아래 **'연결 추가'** 선택
+        - 방금 만든 integration 이름을 검색해서 추가
+
+        ### 3. Database ID 확인
+        - 데이터베이스 주소(URL) 확인
+        - `https://www.notion.so/myworkspace/` 와 `?v=` 사이에 있는 **32자리 문자열**이 ID
+        """)
+
+        st.info("팁: 한 번 연결에 성공 시 사이드바의 '정보 기억하기'를 체크")
+
 # SideBar: userSetting
 with st.sidebar:
     st.title("Connection")
@@ -123,4 +146,5 @@ if st.session_state.connected:
             st.success("모든 작업 완료되었습니다!")
 else:
     st.title("시작하기")
+    show_guide()
     st.info("왼쪽 사이드바에서 노션 연결을 먼저 완료하세요!")
