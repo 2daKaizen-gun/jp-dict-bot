@@ -32,7 +32,7 @@ if 'connected' not in st.session_state:
 st.set_page_config(page_title="일본어 단어 자동 등록기", page_icon="🇯🇵")
 
 def show_guide():
-    with st.expander("시작 전: 필수 연동 가이드 (5분 소요)", expanded=True):
+    with st.expander("시작 전: 필수 연동 가이드", expanded=True):
         st.markdown(f"""
         이 시스템은 **Notion**과 **Google Gemini AI**를 연동하여 작동합니다.
         
