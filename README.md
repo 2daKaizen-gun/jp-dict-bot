@@ -44,7 +44,7 @@
   - [x] Phase 4-5: Multi-language Support
 
 - **Phase 5**: Deployment, Documentation & Portfolio Finalization
-  - [ ] Phase 5-1: Cloud Deployment
+  - [x] Phase 5-1: Cloud Deployment
   - [ ] Phase 5-2: Comprehensive User Documentation (The "How-To")
   - [ ] Phase 5-3: Code Refactoring & Security Audit
   - [ ] Phase 5-4: Final Project Retrospective (The "Story")
