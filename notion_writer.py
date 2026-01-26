@@ -31,6 +31,15 @@ def word_duplicate(word, token, database_id):
 
 def add_word(data, token, database_id):
     """사용자 지정 노션 데이터베이스에 단어 등록"""
+    
+    # Level Data Normalization
+    # AI 응답 없으면 기본값 = 'N3', 대문자 변환
+    raw_level = data.get('level', 'N3').upper().strip()
+    
+    # 허용된 태그 목록이 아니면 'N3'로 고정 (데이터 무결성 확보)
+    allowed_levels = ["N1", "N2", "N3", "N4", "N5"]
+    final_level = raw_level if raw_level in allowed_levels else "N3"
+
     url = "https://api.notion.com/v1/pages"
     headers = {
         "Authorization": f"Bearer {token}",
@@ -44,7 +53,7 @@ def add_word(data, token, database_id):
             "요미가나": {"rich_text": [{"text": {"content": data['furigana']}}]},
             "뜻": {"rich_text": [{"text": {"content": data['meaning']}}]},
             "상태": {"select": {"name": "미학습"}},
-            "레벨": {"multi_select": [{"name": data['level']}]},
+            "레벨": {"multi_select": [{"name": final_level}]},
             "예문": {"rich_text": [{"text": {"content": data['example_ja']}}]},
             "해석": {"rich_text": [{"text": {"content": data['example_ko']}}]},
             "뉘앙스": {"rich_text": [{"text": {"content": data['nuance']}}]}

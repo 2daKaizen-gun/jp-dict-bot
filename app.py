@@ -93,7 +93,15 @@ with st.sidebar:
 if st.session_state.connected:
     st.title("🇯🇵 일본어 단어 자동 등록 시스템")
     st.info(f"현재 연결된 Database ID: `{st.session_state.db_id[:8]}...`")
-    st.write("모르는 단어 하나로 예문, 뉘앙스, JLPT 레벨까지 한번에 완벽 정리!")
+    # JLPT 목표 설정
+    st.subheader("학습 설정")
+    target_level = st.selectbox(
+        "목표 JLPT LEVEL:",
+        ["자동 판정", "N1", "N2", "N3", "N4", "N5"],
+        help = "선택한 레벨로 AI가 예문, 설명을 최적화"
+    )
+    st.divider()
+    st.write("모르는 단어 하나로 JLPT 레벨, 설정 레벨에 따른 예문, 뉘앙스까지 한번에 완벽 정리!")
     word_input = st.text_input("공부할 단어(한글, english, etc.) 입력(','로 구분): ", placeholder = "예: 기회, Opportunity")
 
     if st.button("AI 분석 및 노션 등록하기"):
@@ -113,7 +121,8 @@ if st.session_state.connected:
                 with st.status(f"'{word}' 처리 중... ({i+1}/{total})") as status:
                     # 1. Create AI Data
                     st.write("Genimi AI가 단어 분석 중입니다...")
-                    raw_ai = get_raw_response_from_gemini(word)
+                    
+                    raw_ai = get_raw_response_from_gemini(word, target_level)
                     final_data = parse_to_dict(raw_ai)
 
                     if not final_data:
