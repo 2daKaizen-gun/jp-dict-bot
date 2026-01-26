@@ -36,15 +36,15 @@ def show_guide():
         st.markdown(f"""
         이 시스템은 **Notion**과 **Google Gemini AI**를 연동하여 작동합니다.
         
-        ### 0 전용 템플릿 복제
+        ### 1. 전용 템플릿 복제
         - [일본어 단어장(JP Dictionary) 템플릿]({ "https://noble-pail-b93.notion.site/2f497a6e755980238ef1df44b80868fb?v=2f497a6e7559816e8081000ccd5f8bd3" })에 접속하여 우측 상단 **'복제'**를 클릭
 
-        ### 1 Notion 설정 (DB 연동)
+        ### 2. Notion 설정 (DB 연동)
         - **integration 생성:** [노션 개발자 포털](https://www.notion.so/my-integrations)에서 새 봇을 만들고 '토큰'을 복사
         - **연결 추가:** 복제한 페이지의 '...' 메뉴에서 '연결 추가'를 통해 만든 봇을 등록
         - **Database ID:** URL 주소에서 `notion.site/` 와 `?v=` 사이의 **32자리 문자열**을 복사
 
-        ### 2 Google Gemini API 설정 (AI 연동)
+        ### 3. Google Gemini API 설정 (AI 연동)
         - [Google AI Studio](https://aistudio.google.com/app/apikey)에 접속
         - **'Create API key'** 버튼을 클릭하여 본인만의 키를 생성 (무료 이용 가능)
         - 생성된 키를 사이드바의 **'Gemini API Key'** 칸에 입력
