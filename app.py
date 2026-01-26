@@ -34,22 +34,31 @@ st.set_page_config(page_title="일본어 단어 자동 등록기", page_icon="�
 def show_guide():
     with st.expander("시작 전: 필수 연동 가이드", expanded=True):
         st.markdown(f"""
-        이 시스템은 **Notion**과 **Google Gemini AI**를 연동하여 작동합니다.
+        이 시스템은 정해진 데이터베이스 구조에서만 작동 
+        아래 순서대로 설정을 완료해야 정상적으로 단어가 등록됨
+
+        ### 1. 전용 템플릿 복제 (가장 중요!)
+        - [일본어 단어장(JP Dictionary) 템플릿]({ "https://noble-pail-b93.notion.site/2f497a6e755980238ef1df44b80868fb?v=2f497a6e7559816e8081000ccd5f8bd3" })에 접속
+        - 우측 상단의 **'복제(Duplicate)'**를 클릭하여 본인의 노션 워크스페이스로 가져옴
+        - **주의:** 컬럼명(단어, 요미가나, 뜻 등)을 변경하면 오류 발생 가능성 있음
+
+        ### 2. Notion Integration 생성
+        - [노션 내 Integration](https://www.notion.so/my-integrations) 페이지에 접속
+        - **'+ New Integration'** 버튼을 클릭해 이름을 입력하고 생성
+        - 생성된 **'프라이빗 API 통합 토큰'**을 복사
         
-        ### 1. 전용 템플릿 복제
-        - [일본어 단어장(JP Dictionary) 템플릿]({ "https://noble-pail-b93.notion.site/2f497a6e755980238ef1df44b80868fb?v=2f497a6e7559816e8081000ccd5f8bd3" })에 접속하여 우측 상단 **'복제'**를 클릭
+        ### 3. 데이터베이스에 서비스 연결
+        - **복제한 본인 데이터베이스** 페이지로 이동
+        - 우측 상단 점 세 개(**`...`**) 클릭 -> 맨 아래 **'연결 추가(Add Connections)'** 선택
+        - 방금 만든 Integration 이름을 검색해 추가
 
-        ### 2. Notion 설정 (DB 연동)
-        - **integration 생성:** [노션 개발자 포털](https://www.notion.so/my-integrations)에서 새 봇을 만들고 '토큰'을 복사
-        - **연결 추가:** 복제한 페이지의 '...' 메뉴에서 '연결 추가'를 통해 만든 봇을 등록
-        - **Database ID:** URL 주소에서 `notion.site/` 와 `?v=` 사이의 **32자리 문자열**을 복사
-
-        ### 3. Google Gemini API 설정 (AI 연동)
-        - [Google AI Studio](https://aistudio.google.com/app/apikey)에 접속
-        - **'Create API key'** 버튼을 클릭하여 본인만의 키를 생성 (무료 이용 가능)
-        - 생성된 키를 사이드바의 **'Gemini API Key'** 칸에 입력
+        ### 4. Database ID 확인
+        - 본인 데이터베이스 주소(URL)를 확인
+        - `https://www.notion.so/` 와 `?v=` 사이에 있는 **32자리 영문/숫자 조합**이 Database ID
+        - 예: `...notion.site/` **[이 부분의 32자리 문자열]** `?v=...`
         """)
-        st.info("모든 정보는 브라우저의 세션에만 임시 저장되며, 보안을 위해 안전하게 관리됩니다")
+
+        st.info("팁: 연결에 성공한 후 사이드바의 **'정보 기억하기'**를 체크하면 다음 접속 시 편리함")
 
 # SideBar: userSetting
 with st.sidebar:
