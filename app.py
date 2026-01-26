@@ -32,27 +32,24 @@ if 'connected' not in st.session_state:
 st.set_page_config(page_title="일본어 단어 자동 등록기", page_icon="🇯🇵")
 
 def show_guide():
-    with st.expander("시작 전: 노션 연동 가이드", expanded=False):
-        st.markdown("""
-        이 시스템을 이용하려면 Notion과의 연동이 필요합니다.
-        아래 순서대로 설정을 완료해 주세요.
-
-        ### 1. Notion integration 생성
-        - [노션 내 integration](https://www.notion.so/my-integrations) 페이지에 접속
-        - **'+ New integration'** 버튼 클릭해 이름 입력, 생성
-        - 생성된 **'프라이빗 API 통합 토큰'**을 복사
+    with st.expander("시작 전: 필수 연동 가이드 (5분 소요)", expanded=True):
+        st.markdown(f"""
+        이 시스템은 **Notion**과 **Google Gemini AI**를 연동하여 작동합니다.
         
-        ### 2. 데이터베이스 연결 추가
-        - 사용할 노션 데이터베이스 페이지로 이동
-        - 우측 상단 점 세 개(**`...`**)를 클릭 -> 맨 아래 **'연결 추가'** 선택
-        - 방금 만든 integration 이름을 검색해서 추가
+        ### 0 전용 템플릿 복제
+        - [일본어 단어장(JP Dictionary) 템플릿]({ "https://noble-pail-b93.notion.site/2f497a6e755980238ef1df44b80868fb?v=2f497a6e7559816e8081000ccd5f8bd3" })에 접속하여 우측 상단 **'복제'**를 클릭
 
-        ### 3. Database ID 확인
-        - 데이터베이스 주소(URL) 확인
-        - `https://www.notion.so/myworkspace/` 와 `?v=` 사이에 있는 **32자리 문자열**이 ID
+        ### 1 Notion 설정 (DB 연동)
+        - **integration 생성:** [노션 개발자 포털](https://www.notion.so/my-integrations)에서 새 봇을 만들고 '토큰'을 복사
+        - **연결 추가:** 복제한 페이지의 '...' 메뉴에서 '연결 추가'를 통해 만든 봇을 등록
+        - **Database ID:** URL 주소에서 `notion.site/` 와 `?v=` 사이의 **32자리 문자열**을 복사
+
+        ### 2 Google Gemini API 설정 (AI 연동)
+        - [Google AI Studio](https://aistudio.google.com/app/apikey)에 접속
+        - **'Create API key'** 버튼을 클릭하여 본인만의 키를 생성 (무료 이용 가능)
+        - 생성된 키를 사이드바의 **'Gemini API Key'** 칸에 입력
         """)
-
-        st.info("팁: 한 번 연결에 성공 시 사이드바의 '정보 기억하기'를 체크")
+        st.info("모든 정보는 브라우저의 세션에만 임시 저장되며, 보안을 위해 안전하게 관리됩니다")
 
 # SideBar: userSetting
 with st.sidebar:
