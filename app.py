@@ -34,8 +34,8 @@ st.set_page_config(page_title="일본어 단어 자동 등록기", page_icon="�
 def show_guide():
     with st.expander("시작 전: 필수 연동 가이드", expanded=True):
         st.markdown(f"""
-        이 시스템은 정해진 데이터베이스 구조에서만 작동 
-        아래 순서대로 설정을 완료해야 정상적으로 단어가 등록됨
+        - 정해진 데이터베이스 구조에서만 작동
+        - 아래 순서대로 설정을 완료해야 정상적으로 단어가 등록됨
 
         ### 1. 전용 템플릿 복제 (가장 중요!)
         - [일본어 단어장(JP Dictionary) 템플릿]({ "https://noble-pail-b93.notion.site/2f497a6e755980238ef1df44b80868fb?v=2f497a6e7559816e8081000ccd5f8bd3" })에 접속
@@ -58,7 +58,7 @@ def show_guide():
         - 예: `...notion.site/` **[이 부분의 32자리 문자열]** `?v=...`
         """)
 
-        st.info("팁: 연결에 성공한 후 사이드바의 **'정보 기억하기'**를 체크하면 다음 접속 시 편리함")
+        st.info("팁: 연결에 성공한 후 사이드바의 **정보 기억하기**를 체크하면 다음 접속 시 편리함")
 
 # SideBar: userSetting
 with st.sidebar:
