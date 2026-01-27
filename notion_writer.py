@@ -1,13 +1,17 @@
 import requests
 
-def word_duplicate(word, token, database_id):
-    """사용자가 입력한 token & ID 사용해 중복 확인"""
-    url = f"https://api.notion.com/v1/databases/{database_id}/query"
-    headers = {
+def get_notion_headers(token: str) -> dict:
+    """Notion API 통신 위한 공통 header 반환"""
+    return {
         "Authorization": f"Bearer {token}",
         "Notion-Version": "2022-06-28", # 노션 API
         "Content-Type": "application/json"
     }
+
+def word_duplicate(word, token, database_id):
+    """사용자가 입력한 token & ID 사용해 중복 확인"""
+    url = f"https://api.notion.com/v1/databases/{database_id}/query"
+    headers = get_notion_headers(token)
     payload = {
         "filter": {
             "property": "단어",
