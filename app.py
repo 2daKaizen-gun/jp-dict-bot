@@ -5,21 +5,22 @@ import notion_writer as nw
 import json
 import os
 
+# Constants
 CONFIG_FILE = "user_config.json"
 
 def save_config(token, db_id):
-    """사용자 설정을 JSON 파일로 저장"""
+    """Saves user configuration to a local JSON file"""
     with open(CONFIG_FILE, "w") as f:
         json.dump({"token": token, "db_id": db_id}, f)
 
 def load_config():
-    """저장된 설정 불러오기"""
+    """Loads saved configuration from the local JSON file"""
     if os.path.exists(CONFIG_FILE):
         with open(CONFIG_FILE, "r") as f:
             return json.load(f)
     return None
 
-# 초기화 전 저장된 설정 불러오기
+# Initialization: Load saved credentials
 saved_data = load_config()
 
 if 'connected' not in st.session_state:
@@ -29,36 +30,36 @@ if 'connected' not in st.session_state:
     st.session_state.db_id = saved_data['db_id'] if saved_data else ""
 
 # page setting
-st.set_page_config(page_title="일본어 단어 자동 등록기", page_icon="🇯🇵")
+st.set_page_config(page_title="JP Dictionary Bot | Auto Sync", page_icon="🇯🇵")
 
 def show_guide():
-    with st.expander("시작 전: 필수 연동 가이드", expanded=True):
+    with st.expander("Pre: Connection Guide", expanded=True):
         st.markdown(f"""
-        - 정해진 데이터베이스 구조에서만 작동
-        - 아래 순서대로 설정을 완료해야 정상적으로 단어가 등록됨
+        - This system requires a specific Notion database structure to function correctly
+        - Please follow these steps to set up your environment:
 
-        ### 1. 전용 템플릿 복제 (가장 중요!)
-        - [일본어 단어장(JP Dictionary) 템플릿]({ "https://noble-pail-b93.notion.site/2f497a6e755980238ef1df44b80868fb?v=2f497a6e7559816e8081000ccd5f8bd3" })에 접속
-        - 우측 상단의 **'복제(Duplicate)'**를 클릭하여 본인의 노션 워크스페이스로 가져옴
-        - **주의:** 컬럼명(단어, 요미가나, 뜻 등)을 변경하면 오류 발생 가능성 있음
+        ### 1. Duplicate the Official Template (Required)
+        - ['JP Dictionary' Template]({ "https://noble-pail-b93.notion.site/2f497a6e755980238ef1df44b80868fb?v=2f497a6e7559816e8081000ccd5f8bd3" })에 접속
+        - Click **'Duplicate'** at the top right to copy it to your workspace
+        - **Note:** Do not rename column headers (e.g., Word, Meaning) as it may break the sync
 
-        ### 2. Notion Integration 생성
-        - [노션 내 Integration](https://www.notion.so/my-integrations) 페이지에 접속
-        - **'+ New Integration'** 버튼을 클릭해 이름을 입력하고 생성
-        - 생성된 **'프라이빗 API 통합 토큰'**을 복사
+        ### 2. Create a Notion Integration
+        - Visit [Notion My-Integrations](https://www.notion.so/my-integrations)
+        - Click **'+ New Integration'**, name it, and submit
+        - Copy your **'Internal Integration Token'**
         
-        ### 3. 데이터베이스에 서비스 연결
-        - **복제한 본인 데이터베이스** 페이지로 이동
-        - 우측 상단 점 세 개(**`...`**) 클릭 -> 맨 아래 **'연결 추가(Add Connections)'** 선택
-        - 방금 만든 Integration 이름을 검색해 추가
+        ### 3. Grant Database Access
+        - Open your **duplicated database** in Notion
+        - Click the three dots (**`...`**) at the top right -> **'Connect to'** (or Add Connections)
+        - Search for your Integration name and confirm
 
-        ### 4. Database ID 확인
-        - 본인 데이터베이스 주소(URL)를 확인
-        - `https://www.notion.so/` 와 `?v=` 사이에 있는 **32자리 영문/숫자 조합**이 Database ID
-        - 예: `...notion.site/` **[이 부분의 32자리 문자열]** `?v=...`
+        ### 4. Locate Database ID
+        - Check your database URL
+        - The **32-character string** between the workspace name and the `?v=` is your ID
+        - Example: `...notion.site/` **[THIS_32_CHAR_STRING]** `?v=...`
         """)
 
-        st.info("팁: 연결에 성공한 후 사이드바의 **정보 기억하기**를 체크하면 다음 접속 시 편리함")
+        st.info("Pro Tip: Check **'Remember Me'** in the sidebar to save your credentials locally")
 
 # SideBar: userSetting
 with st.sidebar:
@@ -69,14 +70,14 @@ with st.sidebar:
     input_db_id = st.text_input("Database ID", value=st.session_state.get('db_id', ""))
     
     # 정보 기억 checkbox
-    remember = st.checkbox("이 브라우저에서 정보 기억하기", value=bool(saved_data))
+    remember = st.checkbox("Remember me on this browser", value=bool(saved_data))
     
     # 연결 test Button
     if st.button("Connect to Notion"):
         if input_token and input_db_id:
             # 간단한 query로 검사
-            with st.spinner("연결 확인 중..."):
-                is_valid = nw.word_duplicate("연결테스트", input_token, input_db_id)
+            with st.spinner("Establishing connection..."):
+                is_valid = nw.word_duplicate("ConnectionCheck", input_token, input_db_id)
                 # 중복 확인 함수가 응답이 오면 연결 성공으로 간주함
                 if is_valid is not None or is_valid == False:
                     st.session_state.token = input_token
@@ -89,77 +90,77 @@ with st.sidebar:
                     elif os.path.exists(CONFIG_FILE):
                         os.remove(CONFIG_FILE) # 체크 해제 시 파일 삭제
                     
-                    st.success("연결 성공!")
+                    st.success("Successfully Connected!")
                 else:
-                    st.error("연결 실패! 토큰이나 ID를 확인하세요!")
+                    st.error("Connection Failed. Please verify your Token and ID!")
         else:
-            st.warning("정보를 모두 입력해주세요")
+            st.warning("Please fill in all connection fields")
 
 # Main Screen
 if st.session_state.connected:
-    st.title("🇯🇵 일본어 단어 자동 등록 시스템")
-    st.info(f"현재 연결된 Database ID: `{st.session_state.db_id[:8]}...`")
+    st.title("🇯🇵 Japanese Vocabulary Auto-Sync")
+    st.info(f"Connected to Database ID: `{st.session_state.db_id[:8]}...`")
     # JLPT 목표 설정
-    st.subheader("학습 설정")
+    st.subheader("Learning Preferences")
     target_level = st.selectbox(
-        "목표 JLPT LEVEL:",
-        ["자동 판정", "N1", "N2", "N3", "N4", "N5"],
-        help = "선택한 레벨로 AI가 예문, 설명을 최적화"
+        "Target JLPT Level:",
+        ["Auto-detect", "N1", "N2", "N3", "N4", "N5"],
+        help = "AI will optimize examples and nuances based on the selected level"
     )
     st.divider()
-    st.write("모르는 단어 하나로 JLPT 레벨, 설정 레벨에 따른 예문, 뉘앙스까지 한번에 완벽 정리!")
-    word_input = st.text_input("공부할 단어(한글, english, etc.) 입력(','로 구분): ", placeholder = "예: 기회, Opportunity")
+    st.write("Enter a word to automatically generate JLPT levels, contextual examples, and usage nuances!")
+    word_input = st.text_input("Input Words (Supports Korean, English, etc. Separated by commas(',')): ", placeholder = "예: 기회, Opportunity")
 
-    if st.button("AI 분석 및 노션 등록하기"):
+    if st.button("Analyze & Sync to Notion"):
         if not word_input:
-            st.warning("단어를 입력해 주세요")
+            st.warning("Please enter words")
         else:
             # 단어 리스트 화
             word_list = [w.strip() for w in word_input.split(",") if w.strip()]
             total = len(word_list)
-            st.info(f"총 {total}개의 단어 처리 시작...")
+            st.info(f"Processing {total} word(s)...")
             
             # progress bar
             progress_bar = st.progress(0)
 
             for i, word in enumerate(word_list):
                 # 개별 단어 처리 상태를 보여주는 status 창
-                with st.status(f"'{word}' 처리 중... ({i+1}/{total})") as status:
+                with st.status(f"Processing '{word}'... ({i+1}/{total})") as status:
                     # 1. Create AI Data
-                    st.write("Genimi AI가 단어 분석 중입니다...")
+                    st.write("Generative AI is analyzing...")
                     
                     raw_ai = get_raw_response_from_gemini(word, target_level)
                     final_data = parse_to_dict(raw_ai)
 
                     if not final_data:
-                        st.error(f"'{word}' 분석 실패.. AI 응답 형식이 올바르지 않습니다.")
+                        st.error(f"Failed to analyze '{word}'. Invalid AI response format")
                         continue # 이 단어는 건너뛰고 다음 단어로 진행
                     
                     # 2. Check Duplicate
                     for data in final_data:
-                        st.write("노션 데이터베이스 중복 확인 중...")
+                        st.write("Checking for duplicates in Notion...")
                         duplicate_url = nw.word_duplicate(data['word'], st.session_state.token, st.session_state.db_id)
 
                         if duplicate_url:
-                            st.warning(f"'{data['word']}'는 이미 등록된 단어")
-                            st.link_button("기존 단어 보기", duplicate_url)
+                            st.warning(f"'{data['word']}' already exists in your database")
+                            st.link_button("View Existing Entry", duplicate_url)
                         else:
                             # Notion 등록
-                            st.write("노션에 저장 중입니다...")
+                            st.write("Syncing to Notion...")
                             if nw.add_word(data, st.session_state.token, st.session_state.db_id):
-                                st.success(f"'{data['word']}' 등록 성공!")
+                                st.success(f"'{data['word']}' successfully synced!")
                                 # 결과 요약 표시
-                                st.write(f"뜻: {data['meaning']} | 레벨: {data['level']}")
+                                st.write(f"**Meaning:** {data['meaning']} | **Level:** {data['level']}")
                             else:
-                                st.error(f"등록 실패: {data['word']}")
-                    status.update(label=f"'{word}' 완료!", state="complete")
+                                st.error(f"Failed to sync: {data['word']}")
+                    status.update(label=f"Done with '{word}'!", state="complete")
                 
                 # 3. Progress bar update
                 progress_bar.progress((i + 1) / total)
             
             st.balloons() # balloon effect
-            st.success("모든 작업 완료되었습니다!")
+            st.success("Batch processing complete!")
 else:
-    st.title("시작하기")
+    st.title("Get Started")
     show_guide()
-    st.info("왼쪽 사이드바에서 노션 연결을 먼저 완료하세요!")
+    st.info("Please complete the Notion connection in the sidebar to begin!")

@@ -9,7 +9,7 @@ load_dotenv()
 def initialize_gemini():
     api_key = os.getenv("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY")
     if not api_key:
-        raise ValueError("GEMINI API KEY가 설정되지 않았습니다. 환경 변수나 Secrets를 확인하세요")
+        raise ValueError("GEMINI_API_KEY not found. Please set it in your environment variables or Streamlit Secrets")
     genai.configure(api_key=api_key)
 
 # 초기화 실행
@@ -21,7 +21,7 @@ def get_raw_response_from_gemini(word, target_level):
         
         # 레벨에 따른 추가 지시문 생성
         level_instruction = ""
-        if target_level != "자동 판정":
+        if target_level != "Auto-detect":
             level_instruction = f"The user is currently studying for JLPT {target_level}. Please provide an example sentence and nuance explanation optimized for the {target_level} level."
         else:
             level_instruction = "Analyze the word's typical difficulty and assign a JLPT level (N1~N5) naturally."
@@ -55,5 +55,5 @@ def get_raw_response_from_gemini(word, target_level):
         return response.text # 정제하지 않은 문자열 그대로 반환
     
     except Exception as e:
-        print(f"Gemini API 호출 중 오류 발생:{e}")
+        print(f"Error during Gemini API call: {e}")
         return None
