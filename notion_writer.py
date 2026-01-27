@@ -81,7 +81,7 @@ def add_word(data, token, database_id):
             schema["status"]: {"select": {"name": schema["status_val"]}},
             schema["level"]: {"multi_select": [{"name": final_level}]},
             schema["example"]: {"rich_text": [{"text": {"content": data['example_ja']}}]},
-            schema["translation"]: {"rich_text": [{"text": {"content": data['example_ko']}}]},
+            schema["translation"]: {"rich_text": [{"text": {"content": data['example']}}]},
             schema["nuance"]: {"rich_text": [{"text": {"content": data['nuance']}}]}
         }
     }

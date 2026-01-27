@@ -39,7 +39,7 @@ def show_guide():
         - Please follow these steps to set up your environment:
 
         ### 1. Duplicate the Official Template (Required)
-        - ['JP Dictionary' Template]({ "https://noble-pail-b93.notion.site/2f497a6e755980238ef1df44b80868fb?v=2f497a6e7559816e8081000ccd5f8bd3" })에 접속
+        - Visit ['JP Dictionary' Template]({ "https://noble-pail-b93.notion.site/2f497a6e755980238ef1df44b80868fb?v=2f497a6e7559816e8081000ccd5f8bd3" })
         - Click **'Duplicate'** at the top right to copy it to your workspace
         - **Note:** Do not rename column headers (e.g., Word, Meaning) as it may break the sync
 
@@ -129,7 +129,7 @@ if st.session_state.connected:
                     # 1. Create AI Data
                     st.write("Generative AI is analyzing...")
                     
-                    raw_ai = get_raw_response_from_gemini(word, target_level)
+                    raw_ai = get_raw_response_from_gemini(word, target_level, st.session_state.db_id)
                     final_data = parse_to_dict(raw_ai)
 
                     if not final_data:

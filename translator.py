@@ -15,10 +15,15 @@ def initialize_gemini():
 # 초기화 실행
 initialize_gemini()
 
-def get_raw_response_from_gemini(word, target_level):
+def get_raw_response_from_gemini(word, target_level, database_id):
     try:
         model = genai.GenerativeModel('gemini-flash-latest')
         
+        # Detect Language Mode
+        my_id = os.getenv("NOTION_DATABASE_ID") or st.secrets.get("NOTION_DATABASE_ID")
+        korean_mode = (database_id == my_id)
+        response_lang = "Korean" if korean_mode else "English"
+
         # 레벨에 따른 추가 지시문 생성
         level_instruction = ""
         if target_level != "Auto-detect":
@@ -28,32 +33,29 @@ def get_raw_response_from_gemini(word, target_level):
 
         # 전문적인 지시사항 (System Instruction)
         prompt = f"""
-        You are a professional Japanese linguist and IT career consultant for students.
-        Analyze the word: '{word}' (regardless of its source language: Korean, English, etc.)
-        and provide the most accurate Japanese translation and context.
+        You are a professional Japanese linguist and career consultant.
+        Analyze the word: '{word}' and provide linguistic insights.
 
-        {level_instruction}
+        [Target Audience]
+        - Proficiency: {level_instruction}
+        - Explanation Language: **{response_lang}**
 
-        Return the result ONLY in JSON format with these exact keys:
-        - word: Japanese Kanji (or Hiragana if no Kanji is commonly used).
-        - furigana: Hiragana reading.
-        - meaning: Korean translation.
-        - level: JLPT level (N1~N5).
-        - example_ja: A natural Japanese short sentence. Prioritize business or IT-related contexts if possible. 
-        - example_ko: Korean translation of the example.
-        - nuance: A short tip (in Korean, using 1 or 2 sentences) about the word's nuance or usage in Japan.
+        [Output Format]
+        Return ONLY a raw JSON object with these exact keys:
+        - word: The Japanese expression (Kanji/Hiragana).
+        - furigana: The reading in Hiragana.
+        - meaning: Concise translation in **{response_lang}**.
+        - level: JLPT level (N1-N5).
+        - example_ja: A natural Japanese sentence (Business/IT context preferred).
+        - example: Accurate translation of example_ja in **{response_lang}**.
+        - nuance: 1-2 sentences explaining the usage/tone in **{response_lang}**.
 
-        CRITICAL: Output MUST be a valid JSON object. No markdown, no backticks, no extra text.
-        Do not include any conversational text, markdown code blocks, or explanations outside the JSON.
+        CRITICAL: No markdown backticks, no conversational text. Return only the JSON string.
         """
 
         response = model.generate_content(prompt)
-        
-        if not response.text:
-            return None
-        
-        return response.text # 정제하지 않은 문자열 그대로 반환
+        return response.text if response.text else None
     
     except Exception as e:
-        print(f"Error during Gemini API call: {e}")
+        st.error(f"Gemini Analysis Error: {e}")
         return None
