@@ -166,4 +166,4 @@ This project is more than just a tool for learning Japanese; it is a testament t
 ## ✨ Contact
 - **GitHub Repository**: https://github.com/2daKaizen-gun/jp-dict-bot
 
-- **Email**: hkys1223@naver.com
+- **Email**: hkys1223@gmail.com
