@@ -9,7 +9,7 @@
   - 학습 상태 관리 및 복습 지원
 
 ## 🛠 Tech Stack
-- **Language**: Python 3.14.0
+- **Language**: <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">
 - **Database**: Notion API
 - **AI/LLM**: Google Gemini API
 - **UI Framework**: Streamlit
