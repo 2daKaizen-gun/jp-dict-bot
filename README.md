@@ -123,10 +123,9 @@ graph TD
 **2. Dynamic Database Schema Mapping**
   - **Challenge**: Supporting both personal (Korean headers) and public (English headers) Notion templates without duplicating code.
 
-  - ***Resolution**: Designed a Schema-Switching Logic that detects the database_id and maps internal data keys to the appropriate database property names dynamically.
+  - **Resolution**: Designed a Schema-Switching Logic that detects the database_id and maps internal data keys to the appropriate database property names dynamically.
 
 **3. Robust Duplicate Management**
-
   - **Challenge**: Preventing redundant entries while ensuring the system remains fast.
 
   - **Resolution**: Developed a pre-sync check using the Notion Query API to identify existing entries and provide a direct link to the user instead of creating duplicates.
@@ -135,7 +134,7 @@ graph TD
 - **Efficiency**: Reduced the time to log a single word with full context from ~3 minutes to under 5 seconds.
 - **Quality of Learning**: Provided a consistent learning environment with IT-focused examples, directly supporting career goals in the Japanese tech industry.
 
-🧐 Self-Reflection
+## 🧐 Self-Reflection
 - **Technical Growth**
   - **System Design**: Learned to build a "Production-ready" app by implementing environment-based configuration and error-masking.
 
