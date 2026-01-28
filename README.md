@@ -15,7 +15,7 @@
 - **UI Framework**: Streamlit
 - **Communication**: Requests
 - **Deployment** : Streamlit Cloud
-- **Security**: Streamlit Secrets
+- **Security**: Streamlit Secrets, .gitignore, python-dotenv
 
 ## ✅ Milestone
 - **Phase 1**: Foundation & Environment Setup
