@@ -31,9 +31,45 @@ An AI-powered automation tool that streamlines Japanese language learning by syn
   6. Example
   7. Translation
   8. Nuance
-  
-- **JP-Dictionaty-bot Architecture (Mermaid)**
 
+- **JP-Dictionaty-bot Architecture (Mermaid)**
+```mermaid
+graph TD
+    %% Node Definitions
+    User(["User"])
+    UI["Streamlit Interface"]
+    Gemini{{"Gemini 1.5 Flash<br/>(Linguistic Analysis)"}}
+    Parser["Regex Parser<br/>(JSON Sanitizer)"]
+    Writer["Notion Writer"]
+    Notion[("Notion Database")]
+
+    %% Environment Switch Logic
+    subgraph "Adaptive Schema Mapping"
+        Switch{"Check DB ID"}
+        KR_Schema["Korean Schema<br/>'단어', '뜻'..."]
+        EN_Schema["English Schema<br/>'Word', 'Meaning'..."]
+    end
+
+    %% Data Flow
+    User -->|1. Input Word| UI
+    UI -->|2. Request Analysis| Gemini
+    Gemini --"3. Raw Response (JSON)"--> Parser
+    Parser -->|4. Cleaned Dict| Writer
+    
+    %% Mapping Flow
+    Writer -->|5. Identify Environment| Switch
+    Switch -->|Match Personal ID| KR_Schema
+    Switch -->|Default / Public| EN_Schema
+    
+    KR_Schema & EN_Schema -->|6. Map Properties| Writer
+    Writer -->|7. Sync Data via API| Notion
+
+    %% Styling
+    style UI fill:#FF4B4B,stroke:#333,stroke-width:2px,color:white
+    style Gemini fill:#FFD700,stroke:#333,stroke-width:2px,color:black
+    style Notion fill:#4CAF50,stroke:#333,stroke-width:2px,color:white
+    style Switch fill:#1E90FF,stroke:#333,stroke-width:2px,color:white
+```
 
 ## 🛠 Tech Stack
 - **Language**: <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">
