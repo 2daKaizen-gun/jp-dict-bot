@@ -1,12 +1,39 @@
-# jp-dict-bot(Multi-language->JP Dictionary Automation)
-> 일본어 학습 효율을 극대화하기 위한 개인 사전 자동화 프로젝트
+# 📋 JP-Dictionary-Bot
 
-## 📌 Project Overview
-- **목적**: 학습 중 발견한 단어를 일일이 찾는 번거로움을 줄이고, AI를 통해 풍부한 예문과 함께 자동으로 저장합니다.
-- **주요 기능**:
-  - 어떤 언어든 입력 시 일본어 번역 및 예문 생성 (Gemini API)
-  - Notion 데이터베이스 자동 기록 (Notion API)
-  - 학습 상태 관리 및 복습 지원
+An AI-powered automation tool that streamlines Japanese language learning by syncing contextualized vocabulary data (JLPT level, nuances, and IT/Business examples) to Notion using Gemini AI
+
+## 🎯 Background & Motivation
+- **The Context**
+  - Preparing for employment in the Japanese IT market requires not just memorizing words, but understanding their specific nuances and usage in professional contexts
+
+- **The Problem**
+  1. High Friction in Organization: Manually copying words, looking up kanji/furigana, and pasting them into Notion is time-consuming and disrupts the learning flow
+
+  2. Lack of Context: Simple dictionary definitions often miss the "nuance" (how the word is actually used in Japan) and the appropriate JLPT difficulty level
+
+  3. Data Inconsistency: Managing different database structures for personal use (Korean-based) and global sharing (English-based) creates maintenance overhead
+
+- **The Solution**
+  1. One-Click Sync Pipeline: Built a system where a single word input triggers a complete linguistic analysis and immediate Notion sync
+
+  2. AI-Driven Contextualization: Leveraged Gemini AI to generate IT/Business-focused examples and nuance tips optimized for the user's target JLPT level
+
+  3. Adaptive Schema Mapping: Implemented an environment-aware logic that automatically switches between Korean and English database schemas based on the Database ID
+
+- **Data Source**: User Input (Streamlit Interface), Gemini AI Analysis
+
+- **Key Columns**
+  1. Word
+  2. Furigana
+  3. Meaning
+  4. Status
+  5. Level
+  6. Example
+  7. Translation
+  8. Nuance
+  
+- **JP-Dictionaty-bot Architecture (Mermaid)**
+
 
 ## 🛠 Tech Stack
 - **Language**: <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">
@@ -50,5 +77,38 @@
   - [x] Phase 5-4: Global Localization & UX Optimization 
   - [x] Phase 5-5: Adaptive Multi-Schema & Environment Isolation
   - [ ] Phase 5-6: Final Project Retrospective (The "Story")
-  
-  
+
+## 🔥 Troubleshooting & Lessons Learned
+**1. AI Output Stability (Handling Non-JSON Responses)**
+  - **Challenge**: The AI occasionally included markdown backticks (```json) or conversational text, causing json.loads() to fail.
+
+  - **Resolution**: Implemented a defensive prompt engineering strategy and a robust parser that extracts only the valid JSON block from the raw string.
+
+**2. Dynamic Database Schema Mapping**
+  - **Challenge**: Supporting both personal (Korean headers) and public (English headers) Notion templates without duplicating code.
+
+  - ***Resolution**: Designed a Schema-Switching Logic that detects the database_id and maps internal data keys to the appropriate database property names dynamically.
+
+**3. Robust Duplicate Management**
+
+  - **Challenge**: Preventing redundant entries while ensuring the system remains fast.
+
+  - **Resolution**: Developed a pre-sync check using the Notion Query API to identify existing entries and provide a direct link to the user instead of creating duplicates.
+
+## 📈 Results
+- **Efficiency**: Reduced the time to log a single word with full context from ~3 minutes to under 5 seconds.
+- **Quality of Learning**: Provided a consistent learning environment with IT-focused examples, directly supporting career goals in the Japanese tech industry.
+
+🧐 Self-Reflection
+- **Technical Growth**
+  - **System Design**: Learned to build a "Production-ready" app by implementing environment-based configuration and error-masking.
+
+  - **Global Mindset**: Realized the importance of Localization and how to architect a codebase that supports multiple languages from the start.
+
+- **Problem-Solving Mindset**
+  - **Bridge Builder**: Confirmed that the best software solutions come from automating personal pain points to provide value to a wider community.
+
+## ✨ Contact
+- **GitHub Repository**: https://github.com/2daKaizen-gun/jp-dict-bot
+
+- **Email**: hkys1223@naver.com
