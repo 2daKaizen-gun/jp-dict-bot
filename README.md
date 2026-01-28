@@ -10,12 +10,12 @@
 
 ## 🛠 Tech Stack
 - **Language**: <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">
-- **Database**: Notion API
-- **AI/LLM**: Google Gemini API
-- **UI Framework**: Streamlit
+- **Database**:  ![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)| API
+- **AI/LLM**: ![Google Gemini](https://img.shields.io/badge/google%20gemini-8E75B2?style=for-the-badge&logo=google%20gemini&logoColor=white)| API
+- **UI Framework**: ![Streamlit](https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white)
 - **Communication**: Requests
-- **Deployment** : Streamlit Cloud
-- **Security**: Streamlit Secrets, .gitignore, python-dotenv
+- **Deployment** : ![Streamlit](https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white)| Cloud
+- **Security**: ![Streamlit](https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white)| Secrets, .gitignore, python-dotenv
 
 ## ✅ Milestone
 - **Phase 1**: Foundation & Environment Setup
