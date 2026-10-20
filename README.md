@@ -38,7 +38,7 @@ graph TD
     %% Node Definitions
     User(["User"])
     UI["Streamlit Interface"]
-    Gemini{{"Gemini 1.5 Flash<br/>(Linguistic Analysis)"}}
+    Gemini{{"Gemini (gemini-flash-latest)<br/>(Linguistic Analysis)"}}
     Parser["Regex Parser<br/>(JSON Sanitizer)"]
     Writer["Notion Writer"]
     Notion[("Notion Database")]
