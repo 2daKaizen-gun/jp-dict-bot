@@ -1,36 +1,20 @@
 import streamlit as st
+
+# page setting (다른 Streamlit 호출보다 먼저 실행)
+st.set_page_config(page_title="JP Dictionary Bot | Auto Sync", page_icon="🇯🇵")
+
 from translator import get_raw_response_from_gemini
 from parser import parse_to_dict
 import notion_writer as nw
-import json
 import os
 
-# Constants
-CONFIG_FILE = "user_config.json"
-
-def save_config(token, db_id):
-    """Saves user configuration to a local JSON file"""
-    with open(CONFIG_FILE, "w") as f:
-        json.dump({"token": token, "db_id": db_id}, f)
-
-def load_config():
-    """Loads saved configuration from the local JSON file"""
-    if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "r") as f:
-            return json.load(f)
-    return None
-
-# Initialization: Load saved credentials
-saved_data = load_config()
-
+# Initialization: 자격 증명은 세션에만 보관
+# (서버 파일에 저장하면 배포 환경에서 모든 방문자가 같은 토큰을 공유하게 됨)
 if 'connected' not in st.session_state:
     st.session_state.connected = False
-    # 저장된 데이터 있으면 세션에 미리 넣기
-    st.session_state.token = saved_data['token'] if saved_data else ""
-    st.session_state.db_id = saved_data['db_id'] if saved_data else ""
-
-# page setting
-st.set_page_config(page_title="JP Dictionary Bot | Auto Sync", page_icon="🇯🇵")
+    # 로컬 실행 시 .env 값이 있으면 기본값으로 사용
+    st.session_state.token = os.getenv("NOTION_TOKEN", "")
+    st.session_state.db_id = os.getenv("NOTION_DATABASE_ID", "")
 
 def show_guide():
     with st.expander("Pre: Connection Guide", expanded=True):
@@ -59,7 +43,7 @@ def show_guide():
         - Example: `...notion.site/` **[THIS_32_CHAR_STRING]** `?v=...`
         """)
 
-        st.info("Pro Tip: Check **'Remember Me'** in the sidebar to save your credentials locally")
+        st.info("Pro Tip: Credentials are kept only for this session. When running locally, set `NOTION_TOKEN` and `NOTION_DATABASE_ID` in `.env` to pre-fill them")
 
 # SideBar: userSetting
 with st.sidebar:
@@ -68,28 +52,16 @@ with st.sidebar:
     # 세션 상태에 저장된 값이 있으면 기본값으로 불러옴
     input_token = st.text_input("Notion Token", type="password", value=st.session_state.get('token', ""))
     input_db_id = st.text_input("Database ID", value=st.session_state.get('db_id', ""))
-    
-    # 정보 기억 checkbox
-    remember = st.checkbox("Remember me on this browser", value=bool(saved_data))
-    
+
     # 연결 test Button
     if st.button("Connect to Notion"):
         if input_token and input_db_id:
-            # 간단한 query로 검사
+            # 데이터베이스 조회로 검사
             with st.spinner("Establishing connection..."):
-                is_valid = nw.word_duplicate("ConnectionCheck", input_token, input_db_id)
-                # 중복 확인 함수가 응답이 오면 연결 성공으로 간주함
-                if is_valid is not None or is_valid == False:
+                if nw.check_connection(input_token, input_db_id):
                     st.session_state.token = input_token
                     st.session_state.db_id = input_db_id
                     st.session_state.connected = True
-                    
-                    # checkbox 선택 시 파일로 save
-                    if remember:
-                        save_config(input_token, input_db_id)
-                    elif os.path.exists(CONFIG_FILE):
-                        os.remove(CONFIG_FILE) # 체크 해제 시 파일 삭제
-                    
                     st.success("Successfully Connected!")
                 else:
                     st.error("Connection Failed. Please verify your Token and ID!")
@@ -109,7 +81,7 @@ if st.session_state.connected:
     )
     st.divider()
     st.write("Enter a word to automatically generate JLPT levels, contextual examples, and usage nuances!")
-    word_input = st.text_input("Input Words (Supports Korean, English, etc. Separated by commas(',')): ", placeholder = "예: 기회, Opportunity")
+    word_input = st.text_input("Input Words (Supports Korean, English, etc. Separated by commas(',')): ", placeholder = "e.g. 기회, Opportunity")
 
     if st.button("Analyze & Sync to Notion"):
         if not word_input:
@@ -122,6 +94,7 @@ if st.session_state.connected:
             
             # progress bar
             progress_bar = st.progress(0)
+            failed = 0
 
             for i, word in enumerate(word_list):
                 # 개별 단어 처리 상태를 보여주는 status 창
@@ -134,32 +107,49 @@ if st.session_state.connected:
 
                     if not final_data:
                         st.error(f"Failed to analyze '{word}'. Invalid AI response format")
+                        status.update(label=f"Failed: '{word}'", state="error")
+                        failed += 1
+                        progress_bar.progress((i + 1) / total)
                         continue # 이 단어는 건너뛰고 다음 단어로 진행
-                    
+
                     # 2. Check Duplicate
+                    word_failed = False
                     for data in final_data:
                         st.write("Checking for duplicates in Notion...")
                         duplicate_url = nw.word_duplicate(data['word'], st.session_state.token, st.session_state.db_id)
 
-                        if duplicate_url:
+                        if duplicate_url is None:
+                            st.error(f"Could not check duplicates for '{data['word']}'. Skipped")
+                            word_failed = True
+                        elif duplicate_url:
                             st.warning(f"'{data['word']}' already exists in your database")
                             st.link_button("View Existing Entry", duplicate_url)
                         else:
                             # Notion 등록
                             st.write("Syncing to Notion...")
-                            if nw.add_word(data, st.session_state.token, st.session_state.db_id):
+                            success, error = nw.add_word(data, st.session_state.token, st.session_state.db_id)
+                            if success:
                                 st.success(f"'{data['word']}' successfully synced!")
                                 # 결과 요약 표시
-                                st.write(f"**Meaning:** {data['meaning']} | **Level:** {data['level']}")
+                                st.write(f"**Meaning:** {data.get('meaning', '-')} | **Level:** {data.get('level', '-')}")
                             else:
-                                st.error(f"Failed to sync: {data['word']}")
-                    status.update(label=f"Done with '{word}'!", state="complete")
-                
+                                st.error(f"Failed to sync '{data['word']}': {error}")
+                                word_failed = True
+
+                    if word_failed:
+                        failed += 1
+                        status.update(label=f"Finished '{word}' with errors", state="error")
+                    else:
+                        status.update(label=f"Done with '{word}'!", state="complete")
+
                 # 3. Progress bar update
                 progress_bar.progress((i + 1) / total)
-            
-            st.balloons() # balloon effect
-            st.success("Batch processing complete!")
+
+            if failed:
+                st.warning(f"Batch processing complete with {failed} failed word(s)")
+            else:
+                st.balloons() # balloon effect
+                st.success("Batch processing complete!")
 else:
     st.title("Get Started")
     show_guide()

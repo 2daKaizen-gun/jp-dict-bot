@@ -208,3 +208,4 @@ __marimo__/
 
 # --- Project Specific Persistence Files ---
 user_config.json
+.streamlit/secrets.toml
