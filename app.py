@@ -56,11 +56,9 @@ with st.sidebar:
     # 연결 test Button
     if st.button("Connect to Notion"):
         if input_token and input_db_id:
-            # 간단한 query로 검사
+            # 데이터베이스 조회로 검사
             with st.spinner("Establishing connection..."):
-                is_valid = nw.word_duplicate("ConnectionCheck", input_token, input_db_id)
-                # 중복 확인 함수가 응답이 오면 연결 성공으로 간주함
-                if is_valid is not None or is_valid == False:
+                if nw.check_connection(input_token, input_db_id):
                     st.session_state.token = input_token
                     st.session_state.db_id = input_db_id
                     st.session_state.connected = True
@@ -121,12 +119,13 @@ if st.session_state.connected:
                         else:
                             # Notion 등록
                             st.write("Syncing to Notion...")
-                            if nw.add_word(data, st.session_state.token, st.session_state.db_id):
+                            success, error = nw.add_word(data, st.session_state.token, st.session_state.db_id)
+                            if success:
                                 st.success(f"'{data['word']}' successfully synced!")
                                 # 결과 요약 표시
-                                st.write(f"**Meaning:** {data['meaning']} | **Level:** {data['level']}")
+                                st.write(f"**Meaning:** {data.get('meaning', '-')} | **Level:** {data.get('level', '-')}")
                             else:
-                                st.error(f"Failed to sync: {data['word']}")
+                                st.error(f"Failed to sync '{data['word']}': {error}")
                     status.update(label=f"Done with '{word}'!", state="complete")
                 
                 # 3. Progress bar update
