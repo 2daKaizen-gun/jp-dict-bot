@@ -81,7 +81,7 @@ if st.session_state.connected:
     )
     st.divider()
     st.write("Enter a word to automatically generate JLPT levels, contextual examples, and usage nuances!")
-    word_input = st.text_input("Input Words (Supports Korean, English, etc. Separated by commas(',')): ", placeholder = "예: 기회, Opportunity")
+    word_input = st.text_input("Input Words (Supports Korean, English, etc. Separated by commas(',')): ", placeholder = "e.g. 기회, Opportunity")
 
     if st.button("Analyze & Sync to Notion"):
         if not word_input:
@@ -94,6 +94,7 @@ if st.session_state.connected:
             
             # progress bar
             progress_bar = st.progress(0)
+            failed = 0
 
             for i, word in enumerate(word_list):
                 # 개별 단어 처리 상태를 보여주는 status 창
@@ -106,14 +107,21 @@ if st.session_state.connected:
 
                     if not final_data:
                         st.error(f"Failed to analyze '{word}'. Invalid AI response format")
+                        status.update(label=f"Failed: '{word}'", state="error")
+                        failed += 1
+                        progress_bar.progress((i + 1) / total)
                         continue # 이 단어는 건너뛰고 다음 단어로 진행
-                    
+
                     # 2. Check Duplicate
+                    word_failed = False
                     for data in final_data:
                         st.write("Checking for duplicates in Notion...")
                         duplicate_url = nw.word_duplicate(data['word'], st.session_state.token, st.session_state.db_id)
 
-                        if duplicate_url:
+                        if duplicate_url is None:
+                            st.error(f"Could not check duplicates for '{data['word']}'. Skipped")
+                            word_failed = True
+                        elif duplicate_url:
                             st.warning(f"'{data['word']}' already exists in your database")
                             st.link_button("View Existing Entry", duplicate_url)
                         else:
@@ -126,13 +134,22 @@ if st.session_state.connected:
                                 st.write(f"**Meaning:** {data.get('meaning', '-')} | **Level:** {data.get('level', '-')}")
                             else:
                                 st.error(f"Failed to sync '{data['word']}': {error}")
-                    status.update(label=f"Done with '{word}'!", state="complete")
-                
+                                word_failed = True
+
+                    if word_failed:
+                        failed += 1
+                        status.update(label=f"Finished '{word}' with errors", state="error")
+                    else:
+                        status.update(label=f"Done with '{word}'!", state="complete")
+
                 # 3. Progress bar update
                 progress_bar.progress((i + 1) / total)
-            
-            st.balloons() # balloon effect
-            st.success("Batch processing complete!")
+
+            if failed:
+                st.warning(f"Batch processing complete with {failed} failed word(s)")
+            else:
+                st.balloons() # balloon effect
+                st.success("Batch processing complete!")
 else:
     st.title("Get Started")
     show_guide()
