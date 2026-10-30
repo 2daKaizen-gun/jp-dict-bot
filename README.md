@@ -98,6 +98,7 @@ NOTION_TOKEN=your_notion_integration_token      # optional: pre-fills the sideba
 NOTION_DATABASE_ID=your_personal_database_id    # optional: this DB uses the Korean schema
 ```
 - Any other Database ID entered in the sidebar uses the English (public template) schema.
+- Sidebar pre-fill reads only the local `.env` file. **Never add `NOTION_TOKEN` to Streamlit Cloud Secrets**: users enter their own token in the sidebar.
 
 **3. Run**
 ```bash
