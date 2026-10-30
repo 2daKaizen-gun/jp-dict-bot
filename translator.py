@@ -1,21 +1,22 @@
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import streamlit as st
 from config import get_secret, is_personal_db
+
+MODEL_NAME = "gemini-flash-latest"
 
 # 로컬 환경 변수가 없으면 Streamlit Secrets에서 가져오도록 설정 (배포 대비)
 def initialize_gemini():
     api_key = get_secret("GEMINI_API_KEY")
     if not api_key:
         raise ValueError("GEMINI_API_KEY not found. Please set it in your environment variables or Streamlit Secrets")
-    genai.configure(api_key=api_key)
+    return genai.Client(api_key=api_key)
 
 # 초기화 실행
-initialize_gemini()
+client = initialize_gemini()
 
 def get_raw_response_from_gemini(word, target_level, database_id):
     try:
-        model = genai.GenerativeModel('gemini-flash-latest')
-        
         # Detect Language Mode
         korean_mode = is_personal_db(database_id)
         response_lang = "Korean" if korean_mode else "English"
@@ -49,7 +50,12 @@ def get_raw_response_from_gemini(word, target_level, database_id):
         CRITICAL: No markdown backticks, no conversational text. Return only the JSON string.
         """
 
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt,
+            # JSON 형식 응답 강제 (파서는 방어용으로 유지)
+            config=types.GenerateContentConfig(response_mime_type="application/json")
+        )
         return response.text if response.text else None
     
     except Exception as e:

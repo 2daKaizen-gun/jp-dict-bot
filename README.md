@@ -75,7 +75,7 @@ graph TD
 ## 🛠 Tech Stack
 - **Language**: <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">
 - **Database**:  ![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white) | API
-- **AI/LLM**: ![Google Gemini](https://img.shields.io/badge/google%20gemini-8E75B2?style=for-the-badge&logo=google%20gemini&logoColor=white) | API (`gemini-flash-latest`)
+- **AI/LLM**: ![Google Gemini](https://img.shields.io/badge/google%20gemini-8E75B2?style=for-the-badge&logo=google%20gemini&logoColor=white) | API (`gemini-flash-latest`, `google-genai` SDK)
 - **UI Framework**: ![Streamlit](https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white)
 - **Communication**: Requests
 - **Deployment** : ![Streamlit](https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white) | Cloud
@@ -160,8 +160,10 @@ python main_cli.py       # CLI (uses NOTION_TOKEN / NOTION_DATABASE_ID from .env
 
   - **Resolution**: Removed server-side persistence. Credentials now live only in the user's session, and local runs can pre-fill them from `.env`.
 
-## 📝 Known Limitations & Next Steps
-- The `google-generativeai` SDK has reached end of support. Migrating to the new `google-genai` SDK is planned.
+**5. Deprecated Gemini SDK**
+  - **Challenge**: The `google-generativeai` SDK reached end of support and no longer receives updates or bug fixes.
+
+  - **Resolution**: Migrated to the official `google-genai` SDK and enabled JSON response mode (`response_mime_type="application/json"`), keeping the regex parser as a defensive fallback.
 
 ## 📈 Results
 - **Efficiency**: Reduced the time to log a single word with full context from ~3 minutes to under 5 seconds.
