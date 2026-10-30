@@ -1,36 +1,20 @@
 import streamlit as st
+
+# page setting (다른 Streamlit 호출보다 먼저 실행)
+st.set_page_config(page_title="JP Dictionary Bot | Auto Sync", page_icon="🇯🇵")
+
 from translator import get_raw_response_from_gemini
 from parser import parse_to_dict
 import notion_writer as nw
-import json
 import os
 
-# Constants
-CONFIG_FILE = "user_config.json"
-
-def save_config(token, db_id):
-    """Saves user configuration to a local JSON file"""
-    with open(CONFIG_FILE, "w") as f:
-        json.dump({"token": token, "db_id": db_id}, f)
-
-def load_config():
-    """Loads saved configuration from the local JSON file"""
-    if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "r") as f:
-            return json.load(f)
-    return None
-
-# Initialization: Load saved credentials
-saved_data = load_config()
-
+# Initialization: 자격 증명은 세션에만 보관
+# (서버 파일에 저장하면 배포 환경에서 모든 방문자가 같은 토큰을 공유하게 됨)
 if 'connected' not in st.session_state:
     st.session_state.connected = False
-    # 저장된 데이터 있으면 세션에 미리 넣기
-    st.session_state.token = saved_data['token'] if saved_data else ""
-    st.session_state.db_id = saved_data['db_id'] if saved_data else ""
-
-# page setting
-st.set_page_config(page_title="JP Dictionary Bot | Auto Sync", page_icon="🇯🇵")
+    # 로컬 실행 시 .env 값이 있으면 기본값으로 사용
+    st.session_state.token = os.getenv("NOTION_TOKEN", "")
+    st.session_state.db_id = os.getenv("NOTION_DATABASE_ID", "")
 
 def show_guide():
     with st.expander("Pre: Connection Guide", expanded=True):
@@ -59,7 +43,7 @@ def show_guide():
         - Example: `...notion.site/` **[THIS_32_CHAR_STRING]** `?v=...`
         """)
 
-        st.info("Pro Tip: Check **'Remember Me'** in the sidebar to save your credentials locally")
+        st.info("Pro Tip: Credentials are kept only for this session. When running locally, set `NOTION_TOKEN` and `NOTION_DATABASE_ID` in `.env` to pre-fill them")
 
 # SideBar: userSetting
 with st.sidebar:
@@ -68,10 +52,7 @@ with st.sidebar:
     # 세션 상태에 저장된 값이 있으면 기본값으로 불러옴
     input_token = st.text_input("Notion Token", type="password", value=st.session_state.get('token', ""))
     input_db_id = st.text_input("Database ID", value=st.session_state.get('db_id', ""))
-    
-    # 정보 기억 checkbox
-    remember = st.checkbox("Remember me on this browser", value=bool(saved_data))
-    
+
     # 연결 test Button
     if st.button("Connect to Notion"):
         if input_token and input_db_id:
@@ -83,13 +64,6 @@ with st.sidebar:
                     st.session_state.token = input_token
                     st.session_state.db_id = input_db_id
                     st.session_state.connected = True
-                    
-                    # checkbox 선택 시 파일로 save
-                    if remember:
-                        save_config(input_token, input_db_id)
-                    elif os.path.exists(CONFIG_FILE):
-                        os.remove(CONFIG_FILE) # 체크 해제 시 파일 삭제
-                    
                     st.success("Successfully Connected!")
                 else:
                     st.error("Connection Failed. Please verify your Token and ID!")
