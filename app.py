@@ -6,15 +6,16 @@ st.set_page_config(page_title="JP Dictionary Bot | Auto Sync", page_icon="🇯�
 from translator import get_raw_response_from_gemini
 from parser import parse_to_dict
 import notion_writer as nw
-import os
+from config import get_local_env
 
 # Initialization: 자격 증명은 세션에만 보관
 # (서버 파일에 저장하면 배포 환경에서 모든 방문자가 같은 토큰을 공유하게 됨)
 if 'connected' not in st.session_state:
     st.session_state.connected = False
-    # 로컬 실행 시 .env 값이 있으면 기본값으로 사용
-    st.session_state.token = os.getenv("NOTION_TOKEN", "")
-    st.session_state.db_id = os.getenv("NOTION_DATABASE_ID", "")
+    # 로컬 .env 파일이 있을 때만 기본값으로 사용
+    # (Streamlit Cloud는 Secrets를 환경 변수로도 노출하므로 os.getenv 사용 금지)
+    st.session_state.token = get_local_env("NOTION_TOKEN")
+    st.session_state.db_id = get_local_env("NOTION_DATABASE_ID")
 
 def show_guide():
     with st.expander("Pre: Connection Guide", expanded=True):
