@@ -1,13 +1,10 @@
-import os
 import google.generativeai as genai
 import streamlit as st
-from dotenv import load_dotenv
+from config import get_secret, is_personal_db
 
-# 환경 변수 로드 및 API 설정
-load_dotenv()
 # 로컬 환경 변수가 없으면 Streamlit Secrets에서 가져오도록 설정 (배포 대비)
 def initialize_gemini():
-    api_key = os.getenv("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY")
+    api_key = get_secret("GEMINI_API_KEY")
     if not api_key:
         raise ValueError("GEMINI_API_KEY not found. Please set it in your environment variables or Streamlit Secrets")
     genai.configure(api_key=api_key)
@@ -20,8 +17,7 @@ def get_raw_response_from_gemini(word, target_level, database_id):
         model = genai.GenerativeModel('gemini-flash-latest')
         
         # Detect Language Mode
-        my_id = os.getenv("NOTION_DATABASE_ID") or st.secrets.get("NOTION_DATABASE_ID")
-        korean_mode = (database_id == my_id)
+        korean_mode = is_personal_db(database_id)
         response_lang = "Korean" if korean_mode else "English"
 
         # 레벨에 따른 추가 지시문 생성

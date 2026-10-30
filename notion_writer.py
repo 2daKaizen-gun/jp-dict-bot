@@ -1,6 +1,6 @@
 import requests
-import os
 import streamlit as st
+from config import is_personal_db
 
 def get_notion_headers(token: str) -> dict:
     """Notion API 통신 위한 공통 header 반환"""
@@ -11,8 +11,7 @@ def get_notion_headers(token: str) -> dict:
     }
 
 def get_dbSchema(database_id):
-    my_id = os.getenv("NOTION_DATABASE_ID") or st.secrets.get("NOTION_DATABASE_ID")
-    if database_id == my_id:
+    if is_personal_db(database_id):
         return {
             "word": "단어", "furigana": "요미가나", "meaning": "뜻",
             "status": "상태", "level": "레벨", "example": "예문",
