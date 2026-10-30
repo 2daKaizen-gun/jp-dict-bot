@@ -22,17 +22,17 @@ An AI-powered automation tool that streamlines Japanese language learning by syn
 
 - **Data Source**: User Input (Streamlit Interface), Gemini AI Analysis
 
-- **Key Columns**
-  1. Word
-  2. Furigana
-  3. Meaning
-  4. Status
-  5. Level
-  6. Example
-  7. Translation
-  8. Nuance
+- **Key Columns** (Public / Personal schema)
+  1. Word / 단어
+  2. Furigana / 요미가나
+  3. Meaning / 뜻
+  4. Status / 상태
+  5. Level / 레벨
+  6. Example / 예문
+  7. Translation / 해석
+  8. Nuance / 뉘앙스
 
-- **JP-Dictionaty-bot Architecture (Mermaid)**
+- **JP-Dictionary-Bot Architecture (Mermaid)**
 ```mermaid
 graph TD
     %% Node Definitions
@@ -63,6 +63,7 @@ graph TD
     
     KR_Schema & EN_Schema -->|6. Map Properties| Writer
     Writer -->|7. Sync Data via API| Notion
+    Switch -.->|Response Language KR / EN| Gemini
 
     %% Styling
     style UI fill:#FF4B4B,stroke:#333,stroke-width:2px,color:white
@@ -74,11 +75,35 @@ graph TD
 ## 🛠 Tech Stack
 - **Language**: <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">
 - **Database**:  ![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white) | API
-- **AI/LLM**: ![Google Gemini](https://img.shields.io/badge/google%20gemini-8E75B2?style=for-the-badge&logo=google%20gemini&logoColor=white) | API
+- **AI/LLM**: ![Google Gemini](https://img.shields.io/badge/google%20gemini-8E75B2?style=for-the-badge&logo=google%20gemini&logoColor=white) | API (`gemini-flash-latest`)
 - **UI Framework**: ![Streamlit](https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white)
 - **Communication**: Requests
 - **Deployment** : ![Streamlit](https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white) | Cloud
 - **Security**: ![Streamlit](https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white) | Secrets ![Dotenv](https://img.shields.io/badge/python--dotenv-ecd53f?style=for-the-badge&logo=python&logoColor=black) ![Gitignore](https://img.shields.io/badge/.gitignore-000000?style=for-the-badge&logo=git&logoColor=white)
+
+## 🚀 Getting Started
+**1. Install**
+```bash
+git clone https://github.com/2daKaizen-gun/jp-dict-bot.git
+cd jp-dict-bot
+python -m venv venv
+venv\Scripts\activate        # macOS/Linux: source venv/bin/activate
+pip install -r requirements.txt
+```
+
+**2. Configure** `.env` (local) or `.streamlit/secrets.toml` (Streamlit Cloud)
+```
+GEMINI_API_KEY=your_gemini_api_key
+NOTION_TOKEN=your_notion_integration_token      # optional: pre-fills the sidebar locally, required for CLI
+NOTION_DATABASE_ID=your_personal_database_id    # optional: this DB uses the Korean schema
+```
+- Any other Database ID entered in the sidebar uses the English (public template) schema.
+
+**3. Run**
+```bash
+streamlit run app.py     # Web UI
+python main_cli.py       # CLI (uses NOTION_TOKEN / NOTION_DATABASE_ID from .env)
+```
 
 ## ✅ Milestone
 - **Phase 1**: Foundation & Environment Setup
@@ -103,7 +128,7 @@ graph TD
   - [x] Phase 4-1: Web UI Conversion (Streamlit/Web Framework)
   - [x] Phase 4-2: Dynamic Authentication & Session Management
   - [x] Phase 4-3: Batch Processing & Progress Visualization
-  - [x] Phase 4-4: User Preference Persistence (Optional)
+  - [x] Phase 4-4: User Preference Persistence (Optional) → replaced by session-only storage + `.env` pre-fill (see Troubleshooting #4)
   - [x] Phase 4-5: Multi-language Support
 
 - **Phase 5**: Deployment, Documentation & Portfolio Finalization
@@ -130,6 +155,14 @@ graph TD
 
   - **Resolution**: Developed a pre-sync check using the Notion Query API to identify existing entries and provide a direct link to the user instead of creating duplicates.
 
+**4. Credential Persistence on a Shared Server**
+  - **Challenge**: The original "Remember me" feature saved the Notion token to `user_config.json` on the server. On Streamlit Cloud this file is shared by every visitor, so one user's token could be pre-filled for the next.
+
+  - **Resolution**: Removed server-side persistence. Credentials now live only in the user's session, and local runs can pre-fill them from `.env`.
+
+## 📝 Known Limitations & Next Steps
+- The `google-generativeai` SDK has reached end of support. Migrating to the new `google-genai` SDK is planned.
+
 ## 📈 Results
 - **Efficiency**: Reduced the time to log a single word with full context from ~3 minutes to under 5 seconds.
 - **Quality of Learning**: Provided a consistent learning environment with IT-focused examples, directly supporting career goals in the Japanese tech industry.
@@ -143,7 +176,7 @@ graph TD
 - **Problem-Solving Mindset**
   - **Bridge Builder**: Confirmed that the best software solutions come from automating personal pain points to provide value to a wider community.
 
-## 🧐 Final Project Retrospective (The "Story")
+## 📖 Final Project Retrospective (The "Story")
 
 ### 💡 The Core Philosophy: "Automation with Empathy"
 This project began with a personal pain point: the high friction of organizing vocabulary while preparing for the Japanese IT market. However, through the development process, it evolved into a mission to build a **"resilient bridge"** between human intent and AI execution.
